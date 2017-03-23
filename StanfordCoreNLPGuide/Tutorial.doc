@@ -1,0 +1,18 @@
+This tutorial will help you to implement text analysis processes. 
+
+Stanford CoreNLP is an open source NLP framework 
+(under the GNU General Public License) created by Stanford University for labeling text with NLP annotation (such as POS, NER, Lemma, 
+CoreRef and so on) and doing Relationship Extraction.Stanford CoreNLP provides a set of natural language analysis tools. It can give the base forms of words, their parts of speech, whether they are names of companies, people, etc., normalize dates, times, and numeric quantities, mark up the structure of sentences in terms of phrases and word dependencies, indicate which noun phrases refer to the same entities, indicate sentiment, extract particular or open-class relations between entity mentions, get quotes people said, etc.
+
+Choose Stanford CoreNLP if you need:
+
+An integrated toolkit with a good range of grammatical analysis tools
+Fast, reliable analysis of arbitrary texts
+The overall highest quality text analytics
+Support for a number of major (human) languages
+Available interfaces for most major modern programming languages
+Ability to run as a simple web service
+Stanford CoreNLP’s goal is to make it very easy to apply a bunch of linguistic analysis tools to a piece of text. A tool pipeline can be run on a piece of plain text with just two lines of code. CoreNLP is designed to be highly flexible and extensible. With a single option you can change which tools should be enabled and which should be disabled. Stanford CoreNLP integrates many of Stanford’s NLP tools, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, the coreference resolution system, sentiment analysis, bootstrapped pattern learning, and the open information extraction tools.
+
+References:
+http://stanfordnlp.github.io/CoreNLP/index.html
