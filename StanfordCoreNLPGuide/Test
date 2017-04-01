@@ -1,0 +1,1657 @@
+
+	public Object funct1(String test_name,String test_Id,String fName, String testField) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;
+		String fNameQuery = "", testQuery = "",test_IdQuery="";	
+		
+		fNameQuery = "fName"+":\""+fName+"\"";
+		testQuery = "test_name:\"" + test_name.trim() + "\"";	
+		test_IdQuery="testId:\""+test_Id+"\"";
+		String unionquery = fNameQuery + " AND " + testQuery +" AND "+test_IdQuery;
+		query.setQuery(unionquery);
+		
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0)
+					fieldValue=docs.get(0).getFieldValue(testField);
+				else
+					fieldValue="";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+	//System.out.println(fieldValue);
+	
+	return fieldValue;
+
+	}
+	
+	
+	public Object funct2(String test_name,String test_Id,String fName, String[] testNames) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;
+		String fNameQuery = "", testQuery = "",test_IdQuery="";	
+		Map<String, Object> map=new HashMap<String, Object>();
+		
+		fNameQuery = "fName"+":\""+fName+"\"";
+		testQuery = "test_name:\"" + test_name.trim() + "\"";	
+		test_IdQuery="testId:\""+test_Id+"\"";
+		
+		String unionquery = fNameQuery + " AND " + testQuery + " AND "+test_IdQuery;
+		query.setQuery(unionquery);
+		
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0){
+					//if(testFields.contains(",")){
+					
+					//String[] splittedFields=testFields.split(",");
+					for (String algo : testNames) {
+						fieldValue=docs.get(0).getFieldValue(algo);
+						map.put(algo, fieldValue);
+					}
+				}
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+
+		
+	return map;
+
+	}
+	
+		
+	
+public HashMap<String, String> funct3(String test_name,String test_Id,String searchTerm) throws SolrServerException{
+		
+		//HashSet<String> idList=new HashSet<String>();
+		
+		HashMap<String, String> map=new HashMap<String, String>();
+		SolrDocumentList list = null;
+		
+			SolrQuery query = new SolrQuery();
+			String  testQuery = "",keyTest_Query="",id="",link="",test_IdQuery="";	
+			testQuery = "test_name:\"" + test_name.trim() + "\"";	
+			keyTest_Query="searchTerms:\"" + searchTerm + "\"";
+			test_IdQuery="testId:\""+test_Id+"\"";
+			String unionquery = testQuery + " AND " + keyTest_Query +" AND " +test_IdQuery;
+			query.setQuery(unionquery);
+			query.addFilterQuery("srctype:"+"searchTermList");
+			
+			QueryResponse response;
+			try {
+				response = this.server.query(query);
+				list = response.getResults();
+				
+				if (list.size() == 0) {
+					System.out.println("No document found");
+				}
+				
+				for (SolrDocument doc : list) {
+					id=doc.getFieldValue("id").toString();
+					link=doc.getFieldValue("link").toString();
+					//idList.add(doc.getFieldValue("id").toString());
+					map.put(id, link);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				
+				try {
+					server.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		System.out.println(map);
+		return map;
+	}
+
+	
+
+
+	
+public HashSet<String> func4(String test_name,String test_Id,String searchTerm) throws SolrServerException{
+		
+		HashSet<String> idList=new HashSet<String>();
+		SolrDocumentList list = null;
+	
+	
+			SolrQuery query = new SolrQuery();
+			String  testQuery = "",keyTest_Query="",test_IdQuery="";	
+			testQuery = "test_name:\"" + test_name.trim() + "\"";	
+			keyTest_Query="searchTerms:\"" + searchTerm + "\"";
+			test_IdQuery="testId:\""+test_Id+"\"";
+
+			String unionquery = testQuery + " AND " + keyTest_Query +" AND "+ test_IdQuery;
+			query.setQuery(unionquery);
+			query.addFilterQuery("srctype:"+"searchTermList");			
+			QueryResponse response;
+			try {
+				response = this.server.query(query);
+				list = response.getResults();
+				
+				if (list.size() == 0) {
+					System.out.println("No document found");
+				}
+				for (SolrDocument doc : list) {
+					
+					idList.add(doc.getFieldValue("id").toString());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				
+				try {
+					server.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		
+		return idList;
+	}
+
+
+
+	
+	public Object funct5(String test_name,String test_Id, String id, String testField) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;
+		String testQuery = "",test_IdQuery="";	
+		query.addFilterQuery("id:"+id);
+		
+		testQuery = "test_name:\"" + test_name.trim() + "\"";
+		test_IdQuery="testId:\""+test_Id+"\"";
+
+		String unionquery = testQuery + " AND " + test_IdQuery;
+		
+		query.setQuery(unionquery);
+
+
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0)
+					fieldValue=docs.get(0).getFieldValue(testField);
+				else
+					fieldValue="";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+		return fieldValue;
+
+	}
+	
+	
+	
+	public Object funct6(String test_name,String test_Id,String id, String[] testNamesArr) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;		
+		String testQuery = "",test_IdQuery="";	
+		query.addFilterQuery("id:"+id);		
+		testQuery = "test_name:\"" + test_name.trim() + "\"";
+		test_IdQuery="testId:\""+test_Id+"\"";
+
+		String unionquery = testQuery + " AND " + test_IdQuery;
+		
+		
+		query.setQuery(unionquery);		
+		Map<String, Object> map=new HashMap<String, Object>();
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0){
+					
+					for (String string : testNamesArr) {
+						fieldValue=docs.get(0).getFieldValue(string);
+						map.put(string, fieldValue);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		
+	return map;
+
+	}
+	
+	
+	
+	public Object funct7(String test_name,String test_Id, String link, String testField) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;
+		String testQuery = "",urlQry="",test_IdQuery="";	
+		
+		urlQry="link:\"" + link + "\"";
+		testQuery = "test_name:\"" + test_name.trim() + "\"";
+		test_IdQuery="testId:\""+test_Id+"\"";
+		String unionquery = testQuery + " AND " + urlQry + " AND " +test_IdQuery;
+		query.setQuery(unionquery);
+	
+
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0)
+					fieldValue=docs.get(0).getFieldValue(testField);
+				else
+					fieldValue="";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+		return fieldValue;
+
+	}
+	
+	
+	
+	
+	public Object func8(String test_name,String test_Id,String link, String[] testNamesArr) throws SolrServerException {
+		SolrQuery query = new SolrQuery();
+		SolrDocumentList docs = null;
+		Object fieldValue=null;		
+		String testQuery = "",urlQry="",test_IdQuery="";	
+		urlQry="link:\"" + link + "\"";
+		testQuery = "test_name:\"" + test_name.trim() + "\"";
+		test_IdQuery="testId:\""+test_Id+"\"";
+		
+		String unionquery = testQuery + " AND " + urlQry +" AND " +test_IdQuery;
+		query.setQuery(unionquery);
+	
+		Map<String, Object> map=new HashMap<String, Object>();
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.size() > 0){
+					
+					for (String algo : testNamesArr) {
+						fieldValue=docs.get(0).getFieldValue(algo);
+						map.put(algo, fieldValue);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	
+	//	System.out.println(map);
+	return map;
+	}
+	
+	
+	
+
+		
+	public void delfunct(String test_name){
+		
+		SolrQuery query = new SolrQuery();
+		String testQuery = "";	
+		testQuery = "test_name:\"" + test_name + "\"";
+		query.setQuery(testQuery);
+		 try {
+			server.deleteByQuery(testQuery);
+			server.commit();
+		} catch (SolrServerException | IOException e) {
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				server.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	//==================================================================================================================================================
+	
+	
+	public int getDocCountFunct(String test_name,String test_Id,String srcType){
+		
+		
+		
+		SolrDocumentList docs =null;
+		String unionquery ="";
+		int docCount=0;
+		SolrQuery query = new SolrQuery();
+		query.set("start", 0);
+		query.setRows(10000000); 
+		//query.addFilterQuery("srctype:"+srcType);
+			
+		String srcQuery="srctype:\"" + srcType.trim() + "\"";
+		String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+		String	test_IdQuery="testId:\""+test_Id+"\"";
+		
+		if(srcType.isEmpty() && !test_Id.isEmpty() && !test_name.isEmpty()){
+			 unionquery = testQuery + " AND " + test_IdQuery;
+		}else if(srcType.isEmpty() && test_Id.isEmpty() && !test_name.isEmpty()){
+			unionquery=testQuery;
+		}else if(!srcType.isEmpty() && !test_Id.isEmpty() && !test_name.isEmpty()){
+		 unionquery = srcQuery+ " AND "+testQuery + " AND " + test_IdQuery;
+		}
+		query.setQuery(unionquery);
+		
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				docCount=(int) docs.getNumFound();
+			}catch(Exception e){
+				
+			}
+		
+		return docCount;
+	}
+
+	
+public int getCountFunct2(String test_name){
+	
+	int docCount=0;
+	SolrDocumentList docs =null;	
+	SolrQuery query = new SolrQuery();
+	query.set("start", 0);
+	query.setRows(10000000); 	
+	String	testQuery = "test_name:\"" + test_name.trim() + "\"";	
+	query.setQuery(testQuery);
+	
+	
+		QueryResponse res;
+		try {
+			res = this.server.query(query);
+			docs = res.getResults();
+			docCount=(int) docs.getNumFound();
+		}catch(Exception e){
+			
+		}
+	
+	return docCount;
+}
+
+
+	
+	
+	
+	
+	public Object getFunction4(String test_name,String testId,String srcType,String testField,int start,int rows) throws SolrServerException {
+		SolrDocumentList docs =null;
+		int docCount=0;
+		SolrQuery query = new SolrQuery();
+		query.set("start", start);
+		query.setRows(rows); 
+		query.set("fl", testField);
+		query.addFilterQuery("srctype:"+srcType);
+
+		String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+		String	test_IdQuery="testId:\""+testId+"\"";		
+		String unionquery = testQuery + " AND " + test_IdQuery;
+		query.setQuery(unionquery);
+			
+		HashSet<String> set=new HashSet<String>();
+		QueryResponse res;
+		
+		try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				docCount=(int) docs.size();
+				if(docs!=null&& docCount> 0){
+					for(int i=0;i<docCount;i++){
+						ArrayList<String> fieldValue=(ArrayList<String>) docs.get(i).getFieldValue(testField);
+						if(fieldValue!=null)
+							set.addAll(fieldValue);
+						else 
+							continue;
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+		return set;
+	}
+
+	
+
+	
+	public HashMap<String, Object> getFunction5(String test_name,String testId,String srcType) throws SolrServerException {
+		SolrDocumentList docs =null;
+		String corpSentiment="";
+		float posPercent=0,negPercent=0,neuPercent=0;
+		HashMap<String, Object> map=new HashMap<String, Object>();
+		int docCount=0;
+		SolrQuery query = new SolrQuery();
+		query.set("start", 0);
+		query.setRows(1000000000);	 
+		query.addFilterQuery("srctype:"+srcType);	
+		
+		String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+		String	test_IdQuery="testId:\""+testId+"\"";			
+		String unionquery = testQuery + " AND " + test_IdQuery;	
+		query.setQuery(unionquery);
+		
+		
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				docCount=(int) docs.getNumFound();
+				
+				if(docs!=null&& docCount > 0){
+					for(int i=0;i<docCount;i++){
+
+						posPercent=posPercent +Float.parseFloat(docs.get(i).getFieldValue("pos_percent").toString());
+						negPercent=negPercent+Float.parseFloat(docs.get(i).getFieldValue("neg_percent").toString());
+						neuPercent=neuPercent+Float.parseFloat(docs.get(i).getFieldValue("neu_percent").toString()); 
+					}
+				}
+
+				float	 corp_posPercent=posPercent/docCount;
+				float corp_negPercent=negPercent/docCount;
+				float corp_neuPercent=neuPercent/docCount;
+				
+				corpSentiment=largestOfThree(corp_posPercent,corp_negPercent,corp_neuPercent);				
+			 
+				map.put("sentiment", corpSentiment);
+				map.put("pos_percent", corp_posPercent);
+				map.put("neg_percent", corp_negPercent);
+				map.put("neu_percent", corp_neuPercent);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		return map;
+
+	}
+	
+	 public static String largestOfThree(float posPercent, float negPercent, float neuPercent) {
+	     String sentiment="";
+		   if (posPercent > negPercent && posPercent > neuPercent) {
+	            sentiment= "positive";
+	        } else if (negPercent > posPercent && negPercent > neuPercent) {
+	            sentiment= "negative";
+	        } else if (neuPercent > posPercent && neuPercent > negPercent ) {
+	            sentiment= "neutral";
+	        }else if(posPercent==negPercent){
+	        	  sentiment= "neutral";
+	        }else if(posPercent==neuPercent){
+	        	  sentiment= "positive";
+	        }else if(negPercent==neuPercent){
+	        	  sentiment= "positive";
+	        }
+	        return sentiment;
+	    }
+	 
+	 
+	 public Object getFunct8(String test_name,String testId,String testField,int start,int rows) throws SolrServerException {
+			SolrDocumentList docs =null;
+			int docCount=0;
+			SolrQuery query = new SolrQuery();
+			query.set("start", start);
+			query.setRows(rows); 
+			query.set("fl", testField);
+			String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+			String	test_IdQuery="testId:\""+testId+"\"";			
+			String unionquery = testQuery + " AND " + test_IdQuery;	
+			query.setQuery(unionquery);
+				
+			HashSet<String> set=new HashSet<String>();
+			QueryResponse res;
+			
+			try {
+					res = this.server.query(query);
+					docs = res.getResults();
+					docCount=(int) docs.size();
+					if(docs!=null&& docCount> 0){
+						for(int i=0;i<docCount;i++){
+							ArrayList<String> fieldValue=(ArrayList<String>) docs.get(i).getFieldValue(testField);
+							if(fieldValue!=null)
+								set.addAll(fieldValue);
+							else 
+								continue;
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			
+			return set;
+		}
+	 
+	 
+	 
+	 
+	 
+	 public Object getFunction8(String test_name,String testField,int start,int rows) throws SolrServerException {
+			SolrDocumentList docs =null;
+			int docCount=0;
+			SolrQuery query = new SolrQuery();
+			query.set("start", start);
+			query.setRows(rows); 
+			query.set("fl", testField);
+			String	testQuery = "test_name:\"" + test_name.trim() + "\"";			
+			query.setQuery(testQuery);
+				
+			HashSet<String> set=new HashSet<String>();
+			QueryResponse res;
+			
+			try {
+					res = this.server.query(query);
+					docs = res.getResults();
+					docCount=(int) docs.size();
+					if(docs!=null&& docCount> 0){
+						for(int i=0;i<docCount;i++){
+							ArrayList<String> fieldValue=(ArrayList<String>) docs.get(i).getFieldValue(testField);
+							if(fieldValue!=null)
+								set.addAll(fieldValue);
+							else 
+								continue;
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			
+			return set;
+		}
+ 
+	 
+	 
+	 
+	 public HashMap<String, Object> getFunct9(String test_name) throws SolrServerException {
+			SolrDocumentList docs =null;
+			String corpSentiment="";
+			float posPercent=0,negPercent=0,neuPercent=0;
+			HashMap<String, Object> map=new HashMap<String, Object>();
+			int docCount=0;
+			SolrQuery query = new SolrQuery();
+			query.set("start", 0);
+			query.setRows(1000000000);	 
+			String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+			query.setQuery(testQuery);
+			
+			
+				QueryResponse res;
+				try {
+					res = this.server.query(query);
+					docs = res.getResults();
+					docCount=(int) docs.getNumFound();
+					
+					if(docs!=null&& docCount > 0){
+						for(int i=0;i<docCount;i++){
+
+							posPercent=posPercent +Float.parseFloat(docs.get(i).getFieldValue("pos_percent").toString());
+							negPercent=negPercent+Float.parseFloat(docs.get(i).getFieldValue("neg_percent").toString());
+							neuPercent=neuPercent+Float.parseFloat(docs.get(i).getFieldValue("neu_percent").toString()); 
+						}
+					}
+
+					float	 corp_posPercent=posPercent/docCount;
+					float corp_negPercent=negPercent/docCount;
+					float corp_neuPercent=neuPercent/docCount;
+					
+					corpSentiment=largestOfThree(corp_posPercent,corp_negPercent,corp_neuPercent);				
+				 
+					map.put("sentiment", corpSentiment);
+					map.put("pos_percent", corp_posPercent);
+					map.put("neg_percent", corp_negPercent);
+					map.put("neu_percent", corp_neuPercent);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			return map;
+
+		}
+	 
+	 
+	 
+	 
+	 
+	 public HashMap<String, Object> getFunc10(String test_name,String testId) throws SolrServerException {
+			SolrDocumentList docs =null;
+			String corpSentiment="";
+			float posPercent=0,negPercent=0,neuPercent=0;
+			HashMap<String, Object> map=new HashMap<String, Object>();
+			int docCount=0;
+			SolrQuery query = new SolrQuery();
+			query.set("start", 0);
+			query.setRows(1000000000);	 
+			String	testQuery = "test_name:\"" + test_name.trim() + "\"";
+			String	test_IdQuery="testId:\""+testId+"\"";			
+			String unionquery = testQuery + " AND " + test_IdQuery;	
+			query.setQuery(unionquery);
+			
+				QueryResponse res;
+				try {
+					res = this.server.query(query);
+					docs = res.getResults();
+					docCount=(int) docs.getNumFound();
+					
+					if(docs!=null&& docCount > 0){
+						for(int i=0;i<docCount;i++){
+
+							posPercent=posPercent +Float.parseFloat(docs.get(i).getFieldValue("pos_percent").toString());
+							negPercent=negPercent+Float.parseFloat(docs.get(i).getFieldValue("neg_percent").toString());
+							neuPercent=neuPercent+Float.parseFloat(docs.get(i).getFieldValue("neu_percent").toString()); 
+						}
+					}
+
+					float	 corp_posPercent=posPercent/docCount;
+					float corp_negPercent=negPercent/docCount;
+					float corp_neuPercent=neuPercent/docCount;
+					
+					corpSentiment=largestOfThree(corp_posPercent,corp_negPercent,corp_neuPercent);				
+				 
+					map.put("sentiment", corpSentiment);
+					map.put("pos_percent", corp_posPercent);
+					map.put("neg_percent", corp_negPercent);
+					map.put("neu_percent", corp_neuPercent);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			return map;
+
+		}
+	 
+	 
+		 
+	 
+	 //=======================================================================================================================
+
+	public Object getFunc11(String test_name,String srctype,String searchTerm,String testField,int start,int rows) throws SolrServerException {
+		SolrDocumentList docs =null;
+		HashSet<String> set=new HashSet<String>();
+		SolrQuery query = new SolrQuery();
+		query.set("fl", testField);
+		query.addFilterQuery("srctype:"+srctype);
+		query.set("start", start);
+		query.setRows(rows);  
+		query.addFilterQuery("searchTerms:"+searchTerm);
+		query.addFilterQuery("test_name:"+test_name);
+		query.setQuery("*:*");
+
+			QueryResponse res;
+			try {
+				res = this.server.query(query);
+				docs = res.getResults();
+				if(docs!=null&& docs.getNumFound() > 0){
+					for(int i=0;i<docs.size();i++){
+						if(docs.get(i).getFieldValue(testField)!=null){
+							
+							
+							ArrayList<String> fieldValue=(ArrayList<String>) docs.get(i).getFieldValue(testField);
+							if(fieldValue!=null)
+								set.addAll(fieldValue);
+							else 
+								continue;
+							
+						}
+						
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				
+				try {
+					server.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		return set;
+	}
+	
+	
+	public HashMap<String, Object> getFunc12(String test_name,String srcType,String searchTerm) throws SolrServerException {
+		SolrDocumentList docs =null;
+		String fieldValue=null,corpSentiment="";
+		double	posPercent=0,negPercent=0,neuPercent=0;
+		int docCount=0;
+		HashMap<String, Object> map=new HashMap<String, Object>();
+		SolrQuery query = new SolrQuery();
+		query.set("start", 0);
+		query.setRows(Integer.MAX_VALUE);  
+		query.set("fl", "sentiment,pos_percent,neg_percent,neu_percent");
+		query.addFilterQuery("searchTerms:"+searchTerm);
+		query.addFilterQuery("test_name:"+test_name);
+		query.addFilterQuery("srctype:"+srcType);
+		query.setQuery("*:*");
+		QueryResponse res;
+		
+		try {
+				res = this.server.query(query,METHOD.POST);
+				
+				docs = res.getResults();
+				int doc_sentiment=0;
+				docCount=(int) docs.getNumFound();
+			
+				if(docs!=null&& docCount > 0){
+					for(int i=0;i<docCount;i++){
+						
+						fieldValue=docs.get(i).getFieldValue("sentiment").toString();
+						posPercent=posPercent+Double.parseDouble(docs.get(i).getFieldValue("pos_percent").toString());
+						negPercent=negPercent+Double.parseDouble(docs.get(i).getFieldValue("neg_percent").toString());
+						neuPercent=neuPercent+Double.parseDouble(docs.get(i).getFieldValue("neu_percent").toString()); 
+						
+						if(fieldValue.equals("positive")){
+							
+							doc_sentiment=doc_sentiment+1;
+							
+						}else if(fieldValue.equals("negative")){
+							
+							doc_sentiment=doc_sentiment-1;
+							
+						}else{
+							
+							doc_sentiment=doc_sentiment+0;;
+							
+						}
+
+					}
+				}
+				
+				if(doc_sentiment>0){
+					corpSentiment="positive";
+				}else if(doc_sentiment<0){
+					corpSentiment="negative";
+				}else{
+					corpSentiment="neutral";
+				}
+
+				double	 corp_posPercent=(posPercent)/docCount;
+				double corp_negPercent=(negPercent)/docCount;
+				double corp_neuPercent=(neuPercent)/docCount;
+				
+				map.put("sentiment", corpSentiment);
+				map.put("pos_percent", corp_posPercent);
+				map.put("neg_percent", corp_negPercent);
+				map.put("neu_percent", corp_neuPercent);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				
+				try {
+					server.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		
+		
+		return map;
+
+	}
+	
+--------------------------------------------------------------------------
+
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+
+
+	  HttpSolrServer server;
+	
+
+	/*
+	 * A private Constructor prevents any other class from instantiating.
+	 */
+	public SolrServer() {
+		server = null;
+	}
+
+	public  HttpSolrServer getConnection(String solrURL) {
+
+		//if (server == null) {
+
+			server = new HttpSolrServer(solrURL);
+			server.setMaxRetries(1); // defaults to 0. > 1 not recommended.
+			server.setConnectionTimeout(5000); // 5 seconds to establish TCP
+			// The following settings are provided here for completeness.
+			// They will not normally be required, and should only be used
+			// after consulting javadocs to know whether they are truly
+			// required.
+			server.setSoTimeout(1000); // socket read timeout
+			server.setDefaultMaxConnectionsPerHost(100);
+			server.setMaxTotalConnections(100);
+			server.setFollowRedirects(false); // defaults to false
+			// allowCompression defaults to false.
+			// Server side must support gzip or deflate for this to have any
+			// effect.
+			server.setAllowCompression(false);
+		//}
+		return server;
+	}
+---------------------------------------------------------------------------------------------
+
+
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+
+
+CloudSolrClient client;
+
+	public static void main(String[] args) {
+		CloudSolrClientImpl obj=new CloudSolrClientImpl();
+		obj.getSolrHttpConnection("");
+	
+	}
+	 
+	 public   CloudSolrClient getSolrCloudConnection(String solrURL) {
+		String[] splitURL=solrURL.split("\\|");
+		 String zkHost=splitURL[0];
+		 String solrCore=splitURL[1];
+		 
+		 client=new CloudSolrClient(zkHost);
+		 client.setDefaultCollection(solrCore);
+	
+		return client;
+		
+	}
+	 
+	 
+	 public HttpSolrClient getSolrHttpConnection(String solrURL){
+		// String[] splitURL=solrURL.split("\\|");
+		 //String zkHost=splitURL[0];
+		 //String solrCore=splitURL[1];
+		 solrURL="http://0.0.0.1:8983/solr//#/shard1_replica1";
+		 HttpSolrClient  client = new HttpSolrClient(solrURL);
+		 return client;
+		 
+	 }
+   
+   --------------------------------------------------------------------
+ 
+ <field name="fieldName" type="string" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"/>
+ 
+ 
+ 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.NamedList;
+import org.json.JSONObject;
+
+
+
+
+
+	private static Logger				logger	= Logger.getLogger(WordCloudImpl.class);
+	
+	HttpSolrServer client = null;
+	SolrServer obj = new SolrServer();
+
+	// CloudSolrClient client;
+	// CloudSolrClientImpl obj=new CloudSolrClientImpl();
+
+	public WordCloudImpl(String indexPath) {
+
+		this.client = obj.getConnection(indexPath);
+		// client=obj.getSolrCloudConnection(indexPath);
+
+	}
+
+	public static void main(String[] args) {
+		WordCloudImpl obj = new WordCloudImpl(
+				"http://182.95.208.161:8983/solr/tcfeatureindexdata");
+		 obj.generateWordCloudByAdtr("WF_TestCloud","1097", "named_entity,adjective", 50);
+		//obj.generateWordCloudByWF("WF_TestCloud", "named_entity,adjective", 100);
+		// obj.generateWordCloudByTfIdfValue("WF2",
+		// "adjective,keywords,named_entity",50);
+		// obj.generateWordCloudWithChunkByFacetValue("named_entity,keywords",
+		// 20);
+	}
+
+
+
+		public JSONObject genWordCldFun1(String filed1,
+			String id, String type, final String fieldName,
+			int limit) {
+		JSONObject resJson = new JSONObject();
+		try {
+
+			SolrQuery query = new SolrQuery();
+			query.setFacet(true);
+			query.setFacetMinCount(1);
+
+			// Here we can't specify fields as comma separated value.But we can
+			// add one by one
+			if (fieldName.contains(",")) {
+				String[] fields = fieldName.split(",");
+				for (int i = 0; i < fields.length; i++) {
+					query.addFacetField(fields[i]);
+				}
+			} else
+				query.addFacetField(fieldName);
+
+			String query = "filed1" + ":\"" + filed1
+					+ "\"";
+			String idQuery = "id:\"" + id + "\"";
+			String srcQuery = "type:\"" + type.trim() + "\"";
+			String unionquery = query + " AND " + idQuery
+					+ " AND " + srcQuery;
+			query.setQuery(unionquery);
+			QueryResponse res = this.client.query(query);			
+			resJson=formatResponseJson(res, limit);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		logger.info("Word cloud by source type:   "+resJson);
+		return resJson;
+
+	}
+
+
+	
+	public JSONObject genWCFunc2(String filed1,
+			String id, final String fieldName, int limit) {
+		JSONObject resJson = new JSONObject();
+		try {
+
+			SolrQuery query = new SolrQuery();
+			query.setFacet(true);
+			query.setFacetMinCount(1);
+
+			// Here we can't specify fields as comma separated value.But we can
+			// add one by one
+			if (fieldName.contains(",")) {
+				String[] fields = fieldName.split(",");
+				for (int i = 0; i < fields.length; i++) {
+					query.addFacetField(fields[i]);
+				}
+			} else
+				query.addFacetField(fieldName);
+
+			String query = "filed1" + ":\"" + filed1
+					+ "\"";
+			String idQuery = "id:\"" + id + "\"";
+
+			String unionquery = query + " AND " + idQuery;
+			query.setQuery(unionquery);
+			QueryResponse res = this.client.query(query);
+
+			resJson=formatResponseJson(res, limit);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		logger.info("Word cloud by Audit trail:   "+resJson);
+		return resJson;
+
+	}
+
+
+	public JSONObject genWCFunc3(String filed1,
+			final String fieldName, int limit) {
+		// String[] cloudWord = new String[100];
+		JSONObject resJson = new JSONObject();
+		try {
+
+			SolrQuery query = new SolrQuery();
+			query.setFacet(true);
+			query.setFacetMinCount(1);
+
+			// Here we can't specify fields as comma separated value.But we can
+			// add one by one
+			if (fieldName.contains(",")) {
+				String[] fields = fieldName.split(",");
+				for (int i = 0; i < fields.length; i++) {
+					query.addFacetField(fields[i]);
+				}
+			} else
+				query.addFacetField(fieldName);
+
+			String query = "filed1" + ":\"" + filed1
+					+ "\"";
+			query.setQuery(query);
+			QueryResponse res = this.client.query(query);
+			resJson=formatResponseJson(res, limit);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		logger.info("word cloud by workflow:   "+resJson);
+		return resJson;
+
+	}
+	private JSONObject formatResponseJson(QueryResponse res, int limit) {
+
+		JSONObject resJson = new JSONObject();
+		List<FacetField> facetFieldList = res.getFacetFields();
+
+		Map<String, Object> dataMap = new TreeMap<String, Object>(
+				String.CASE_INSENSITIVE_ORDER);
+		try {
+			for (FacetField ff : facetFieldList) {
+				List<Count> vals = ff.getValues();
+				if (vals != null) {
+					for (Count val : vals) {
+						String dataKey = val.getName().replaceAll("\\s+"," ").trim();
+						if (!dataMap.containsKey(dataKey)) {
+							dataMap.put(dataKey, (int) val.getCount());
+
+						} else {
+							int totalCount = Integer.valueOf(dataMap.get(
+									dataKey).toString())
+									+ (int) val.getCount();
+							dataMap.put(dataKey, (int) totalCount);
+						}
+					}
+				}
+			}
+
+			dataMap = sortByValues(dataMap);
+			for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
+				if (limit != 0) {
+					Map<String, Object> data = new HashMap<String, Object>();
+
+					data.put("count", entry.getValue());
+					data.put("key", entry.getKey());
+					resJson.accumulate("data", data);
+					limit--;
+
+				}
+				if (limit == 0) {
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		return resJson;
+
+	}
+
+
+
+	private HashMap<String, Object> sortByValues(Map<String, Object> map) {
+		List list = new LinkedList(map.entrySet());
+		// Defined Custom Comparator here
+		Collections.sort(list, new Comparator<Object>() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o2)).getValue())
+						.compareTo(((Map.Entry) (o1)).getValue());
+			}
+		});
+
+		// Here I am copying the sorted list in HashMap
+		// using LinkedHashMap to preserve the insertion order
+		HashMap<String, Object> sortedHashMap = new LinkedHashMap<String, Object>();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it
+					.next();
+			sortedHashMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedHashMap;
+	}
+
+	public JSONObject genWCFunc4(
+			final String fieldName, int limit) {
+		// String[] cloudWord = new String[100];
+		ArrayList<String> wordList = new ArrayList<>();
+		JSONObject resJson = new JSONObject();
+		try {
+
+			SolrQuery query = new SolrQuery();
+			query.setFacet(true);
+			query.setFacetMinCount(1);
+
+			// Here we can't specify fields as comma separated value.But we can
+			// add one by one
+			if (fieldName.contains(",")) {
+				String[] fields = fieldName.split(",");
+				for (int i = 0; i < fields.length; i++) {
+					query.addFacetField(fields[i]);
+				}
+
+			} else
+				query.addFacetField(fieldName);
+
+			query.setQuery("*:*");
+			QueryResponse res = this.client.query(query);
+			List<FacetField> facetFieldList = res.getFacetFields();
+
+			for (FacetField ff : facetFieldList) {
+				List<Count> vals = ff.getValues();
+				if (limit != 0) {
+					if (vals != null) {
+						for (Count val : vals) {
+							Map<String, Object> data = new HashMap<String, Object>();
+							wordList.add(val.getName().toLowerCase() + "_"
+									+ val.getCount());
+
+							data.put("count", val.getCount());
+							data.put("key", val.getName().toLowerCase());
+							resJson.accumulate("data", data);
+							limit--;
+							if (limit == 0) {
+								break;
+							}
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		// cloudWord = wordList.toArray(new String[wordList.size()]);
+		// System.out.println(resJson);
+		return resJson;
+
+	}
+
+	
+	public String[] genWCbyTfIdfValue(String filed1,
+			final String fieldName, int limit) {
+		String[] cloudWord;
+		ArrayList<String> wordList = new ArrayList<>();
+		SolrDocumentList list = null;
+		try {
+			SolrQuery query = new SolrQuery();
+			query.setQuery("*:*");
+
+			// Here we can specify fields as comma separated value.
+
+			query.set("fl", fieldName);
+			query.setRequestHandler("/tvrh");
+			query.setParam("tv.tf_idf", true);
+			QueryResponse response = this.client.query(query);
+
+			list = response.getResults();
+
+			if (list.size() == 0) {
+				System.out.println("No document found");
+			}
+
+			Map<String, Double> tfidfMap = getResults(response);
+
+			Map<String, Double> tfidfMapSorted = MapSort
+					.sortMapOnDoubleValues(tfidfMap);
+			Map<String, Object> data = new HashMap<String, Object>();
+
+			if (limit != 0) {
+				for (String key : tfidfMapSorted.keySet()) {
+					limit--;
+					if (limit == 0) {
+						break;
+					}
+					wordList.add(key.toLowerCase()
+							+ " _"
+							+ String.valueOf(tfidfMapSorted.get(key).intValue()));
+
+					data.put("count",
+							String.valueOf(tfidfMapSorted.get(key).intValue()));
+					data.put("key",
+							String.valueOf(tfidfMapSorted.get(key).intValue()));
+					// resJson.accumulate("data", data);
+
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		cloudWord = wordList.toArray(new String[wordList.size()]);
+		return cloudWord;
+	}
+
+	public void getTfIdfValues(final int unique_id, int limit) {
+
+		try {
+
+			SolrQuery query = new SolrQuery("id:" + unique_id);
+			query.setRequestHandler("/tvrh");
+			query.setParam("tv.tf_idf", true);
+			QueryResponse qr = this.client.query(query);
+			Map<String, Double> tfidfMap = getResults(qr);
+
+			Map<String, Double> tfidfMapSorted = MapSort
+					.sortMapOnDoubleValues(tfidfMap);
+
+			if (limit != 0) {
+
+				for (String key : tfidfMapSorted.keySet()) {
+					limit--;
+					if (limit == 0) {
+						break;
+					}
+					// System.out.println(key + " : " +
+					// tfidfMapSorted.get(key));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	static Map<String, Double> getResults(final QueryResponse solrResponse) {
+
+		Map<String, Double> tfidfMap = new HashMap<String, Double>();
+		NamedList<Object> response = solrResponse.getResponse();
+		NamedList<Object> termVectorsObject = null;
+		for (int i = 0; i < response.size(); i++) {
+			final String name = response.getName(i);
+			if ("termVectors".contentEquals(name)) {
+
+				/*
+				 * System.out.println("Response :" + response.getName(i) + ":::"
+				 * + response.getVal(i));
+				 */
+				termVectorsObject = (NamedList<Object>) response.getVal(i);
+
+				Iterator<Entry<String, Object>> termVectorIteratior = termVectorsObject
+						.iterator();
+
+				termVectorIteratior.next();
+				while (termVectorIteratior.hasNext()) {
+					Entry<String, Object> entry = termVectorIteratior.next();
+
+					NamedList<Object> termVectorEntryValue = (NamedList<Object>) entry
+							.getValue();
+
+					Iterator<Entry<String, Object>> termVectorEntryValueIterator = termVectorEntryValue
+							.iterator();
+
+					termVectorEntryValueIterator.next();
+					while (termVectorEntryValueIterator.hasNext()) {
+						Entry<String, Object> entry1 = termVectorEntryValueIterator
+								.next();
+
+						NamedList<Object> termVector = (NamedList<Object>) entry1
+								.getValue();
+						Iterator<Entry<String, Object>> termVectorIterator = termVector
+								.iterator();
+
+						termVectorIterator.next();
+						while (termVectorIterator.hasNext()) {
+							Entry<String, Object> entry2 = termVectorIterator
+									.next();
+
+							tfidfMap.put(entry2.getKey(),
+									(Double) ((NamedList<Object>) entry2
+											.getValue()).get("tf-idf"));
+
+						}
+					}
+				}
+
+			}
+		}
+		return tfidfMap;
+	}
+
+}
+---------------------------------------------------------------------
+
+
+public static List<Entry<String, Integer>> sortMapOnValues(Map<String, Integer> WordCountMap) {
+
+		Set<Entry<String, Integer>> set = WordCountMap.entrySet();
+		List<Entry<String, Integer>> list = new ArrayList<Entry<String, Integer>>(set);
+
+		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		return list;
+	}
+
+	public static Map<Integer, Integer> sortMapOnIntegerValues(Map<Integer, Integer> WordCountMap) {
+
+		Map<Integer, Integer> result = new LinkedHashMap<Integer, Integer>();
+		Set<Entry<Integer, Integer>> set = WordCountMap.entrySet();
+		List<Entry<Integer, Integer>> list = new ArrayList<Entry<Integer, Integer>>(set);
+
+		Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+			public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		for (Entry<?, ?> entry : list) {
+			result.put((Integer) entry.getKey(), (Integer) entry.getValue());
+
+		}
+
+		return result;
+	}
+
+	public static Map<String, Double> sortMapOnDoubleValues(Map<String, Double> avgItemTFIDF) {
+
+		Map<String, Double> result = new LinkedHashMap<String, Double>();
+		Set<Entry<String, Double>> set = avgItemTFIDF.entrySet();
+		List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(set);
+
+		Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
+			public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+		
+		for (Entry<?, ?> entry : list) {
+			result.put( (String) entry.getKey(), (Double) entry.getValue());
+
+		}
+
+
+		return result;
+	}
+
+
+------------------------------------------------------------------------
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns:javaee="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_4.xsd ">
+	<servlet>
+		<servlet-name>listenerServlet</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>listenerServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+</web-app>
+
+
+
+---------------------------------------------
+
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>test.lib.search</groupId>
+	<artifactId>WebSearchWrapper</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>WebSearchWrapper</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<spring.version>4.1.7.RELEASE</spring.version>
+		<jersey.version>1.2</jersey.version>
+		<servlet.version>2.5</servlet.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		 <dependency>
+	    <groupId>org.apache.opennlp</groupId>
+		<artifactId>opennlp-tools</artifactId>
+		<version>1.5.3</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.opennlp</groupId>
+		<artifactId>opennlp-maxent</artifactId>
+		<version>3.0.3</version>
+	</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-snowball</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>3.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>wstx-asl</artifactId>
+			<version>3.2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.noggit</groupId>
+			<artifactId>noggit</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mcavallo</groupId>
+			<artifactId>opencloud</artifactId>
+			<version>0.3</version>
+		</dependency>
+		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-client</artifactId> 
+			<version>1.18.2</version> </dependency> -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>1.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+			<version>1.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+		<finalName>WebSearchWrapper</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+	                <webXml>src\main\web\WEB-INF\web.xml</webXml>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.6,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
+--------------------------------------------------------------------------------------------------------
+
+
+
